@@ -1,1 +1,6 @@
 credentials.*
+__pycache__/
+data/
+logs/
+/cve/
+/cve_cpe_config_dir/

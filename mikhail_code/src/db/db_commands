@@ -1,0 +1,17 @@
+select * from apt_packages ap;
+--inner join cpes c 
+--on ap.package = c.product 
+--and ap."version"=c.version
+--inner join cve_cpe_config ccc 
+--on c.cpe_id_pk = accc.cpe_id_fk 
+--inner join cves c2
+--on ccc.cve_id_fk = c2.cve_id_pk;
+
+select * from snap_packages ap 
+inner join cpes c 
+on ap.package = c.product ;
+--and ap."version"=c.version
+
+select * from os_info ap 
+inner join cpes c 
+on ap.product = c.product ;
