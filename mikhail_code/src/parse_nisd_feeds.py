@@ -263,7 +263,7 @@ def search_in_cpe_feed(dict_from_cpe_feed, cpe23uri_to_search: str,
     try:
         splitted_cpe = cpe23uri_to_search.lstrip("cpe:2.3:").split(":") 
     except AttributeError as e:
-        logger.error(f'Error for cpe23uri_to_search -- {cpe23uri_to_search}. Error -- {e}')
+        # logger.debug(f'Error for cpe23uri_to_search -- {cpe23uri_to_search}. Error -- {e}')
         return None
     
     for i in range(len(splitted_cpe)-1, 0, -1):
@@ -272,8 +272,8 @@ def search_in_cpe_feed(dict_from_cpe_feed, cpe23uri_to_search: str,
             break
     try:
         available_cpes = dict_from_cpe_feed[minimal_non_empty_from_right_cpe]  
-    except UnboundLocalError as e:
-        logger.error(f'UnboundLocalError for cpe23uri_to_search -- {cpe23uri_to_search}. Error -- {e}')
+    except:
+        # logger.debug(f'UnboundLocalError for cpe23uri_to_search -- {cpe23uri_to_search}. Error -- {e}')
         return None
     found_cpes = []
     # # !!!!!!!!!!!!!!!!!! slow approach!!!!!!!!cpe23uri_to_search!!!!!!!!!!
@@ -328,9 +328,10 @@ def parse_feed(config: json, old_counter: int, dict_from_cpe_feed):
                 matched_cpes_from_feed = search_in_cpe_feed(dict_from_cpe_feed, cpe23Uri, versionStartIncluding, 
                                                versionEndIncluding, versionStartExcluding, versionEndExcluding)
                 # t3 = time.time()
-                for _, cpe_i in enumerate(matched_cpes_from_feed):
-                    cve_cpe_match.append([cve_name, cpe_i, counter])
-                    counter += 1
+                if matched_cpes_from_feed:
+                    for _, cpe_i in enumerate(matched_cpes_from_feed):
+                        cve_cpe_match.append([cve_name, cpe_i, counter])
+                        counter += 1
                 
                 # print(f"Elapsed inside search_in_cpe t4-t3: {time.time() - t3}")
                 # print(f"Elapsed inside search_in_cpe t3-t2: {t3 - t2}")
