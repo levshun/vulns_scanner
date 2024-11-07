@@ -1,6 +1,5 @@
 import sys
 import os
-
 import logging
 from src.utils.logger import main_logger
 logger = main_logger()

@@ -1,4 +1,8 @@
 import logging
+import datetime
+
+def get_today_date():
+    return datetime.datetime.today().strftime('%d%m%Y')
 
 def main_logger():
     logger = logging.getLogger("main_logger")
@@ -12,7 +16,7 @@ def main_logger():
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
 
-    file_handler = logging.FileHandler(f"logs/main_logger.log", mode='a', encoding="utf-8")
+    file_handler = logging.FileHandler(f"logs/main_logger_{get_today_date()}.log", mode='a', encoding="utf-8")
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
