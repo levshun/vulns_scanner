@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vulnerability NER Extractor</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 20px; }
+        textarea { width: 100%; height: 150px; margin: 10px 0; }
+        .result { margin-top: 20px; padding: 15px; background: #f0f0f0; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>Vulnerability NER Extractor</h1>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <textarea name="text" placeholder="Enter vulnerability description...">{{ input_text if input_text else '' }}</textarea>
+        <br>
+        <button type="submit">Analyze</button>
+    </form>
+
+    {% if result %}
+    <div class="result">
+        <h3>Extraction Result:</h3>
+        {{result }}
+    </div>
+    {% endif %}
+</body>
+</html>
