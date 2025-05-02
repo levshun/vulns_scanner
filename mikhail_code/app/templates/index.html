@@ -3,14 +3,22 @@
 <head>
     <title>Vulnerability NER Extractor</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 20px; }
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 20px auto; padding: 20px; }
         textarea { width: 100%; height: 150px; margin: 10px 0; }
-        .result { margin-top: 20px; padding: 15px; background: #f0f0f0; white-space: pre-wrap; }
+        .result { margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px; }
+        .highlight { padding: 2px 4px; border-radius: 3px; }
+        .vendor { background-color: #FFD700; }  /* Yellow */
+        .product { background-color: #90EE90; } /* Green */
+        .version { background-color: #87CEEB; } /* Blue */
+        table { width: 100%; margin-top: 15px; border-collapse: collapse; }
+        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #e9ecef; }
+        .confidence { color: #666; font-size: 0.9em; }
     </style>
 </head>
 <body>
     <h1>Vulnerability NER Extractor</h1>
-    
+
     {% with messages = get_flashed_messages() %}
         {% if messages %}
             {% for message in messages %}
@@ -25,10 +33,30 @@
         <button type="submit">Analyze</button>
     </form>
 
-    {% if result %}
+    {% if highlighted_text %}
     <div class="result">
-        <h3>Extraction Result:</h3>
-        {{result }}
+        <h3>Highlighted Text:</h3>
+        <div class="text-container">{{ highlighted_text|safe }}</div>
+        
+        <h3 style="margin-top: 20px;">Structured Results:</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>Confidence</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entity in structured_results %}
+                <tr>
+                    <td>{{ entity.type }}</td>
+                    <td>{{ entity.value }}</td>
+                    <td>{{ "%.2f"|format(entity.score * 100) }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
     {% endif %}
 </body>

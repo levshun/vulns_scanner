@@ -12,14 +12,16 @@ def run(input_string: str) -> str:
         "token-classification", model=final_model, aggregation_strategy="first", tokenizer=final_tokenizer
     )
     res = token_classifier(input_string)
-    output = ''
-    for i, r in enumerate(res):
-        # print('Entity: '+ r['entity_group'] + '   Word: ' + r['word'])
-        output += str(f'{i+1}. ' + 'Entity: ' + r['entity_group'] + '   Word: ' + r['word'] + '   Prob: ' + str(r['score']) + '\n\t')
-    # print(output)
-    if output == '':
-        output = 'No NER found'
-    return output
+    # output = ''
+    # for i, r in enumerate(res):
+    #     # print('Entity: '+ r['entity_group'] + '   Word: ' + r['word'])
+    #     output += str(f'{i+1}. ' + 'Entity: ' + r['entity_group'] + '   Word: ' + r['word'] + '   Prob: ' + str(r['score']) + '\n\t')
+    # # print(output)
+    # if output == '':
+    #     output = 'No NER found'
+    # return output
+    return res
+
 
 if __name__ == '__main__':
     run(input())
