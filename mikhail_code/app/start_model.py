@@ -3,7 +3,7 @@ from transformers import (AutoTokenizer, AutoModelForTokenClassification,
 import warnings
 warnings.filterwarnings('ignore')
 
-path_to_model = "/home/mikhail/Documents/pandan_study/vkr/vulns_scanner/mikhail_code/models/nuner_as_tok_clf_190425/best_model"
+path_to_model = "/home/mikhail/Documents/pandan_study/vkr/vulns_scanner/mikhail_code/models/nuner_180525_full_dataset"
 final_tokenizer = AutoTokenizer.from_pretrained(path_to_model, use_fast=True, add_prefix_space=True, local_files_only=True)
 final_model = AutoModelForTokenClassification.from_pretrained(path_to_model, local_files_only=True)
 
