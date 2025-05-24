@@ -3,168 +3,11 @@
 <head>
     <title>Vulnerability Analyzer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #2c3e50;
-            --secondary: #3498db;
-            --success: #27ae60;
-            --danger: #e74c3c;
-        }
-
-        body { 
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
-            max-width: 1200px; 
-            margin: 40px auto; 
-            padding: 0 20px;
-            background: #f8f9ff;
-            color: #333;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding: 2rem 0;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        textarea {
-            width: 100%;
-            height: 150px;
-            padding: 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            resize: vertical;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-
-        textarea:focus {
-            border-color: var(--secondary);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-        }
-
-        button {
-            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: transform 0.2s ease, opacity 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        button:hover {
-            transform: translateY(-1px);
-            opacity: 0.9;
-        }
-
-        .result-card {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            margin-top: 2rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-
-        .highlight {
-            padding: 2px 4px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-
-        .vendor { background-color: #fff3cd; color: #856404; }
-        .product { background-color: #d4edda; color: #155724; }
-        .version { background-color: #d1ecf1; color: #0c5460; }
-
-        table {
-            width: 100%;
-            margin-top: 1.5rem;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-
-        th, td {
-            padding: 12px 16px;
-            text-align: left;
-        }
-
-        th {
-            background-color: var(--primary);
-            color: white;
-            font-weight: 600;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-
-        .confidence {
-            font-size: 0.9em;
-            color: #666;
-            font-weight: 400;
-        }
-
-        .alert {
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 0 15px;
-                margin: 20px auto;
-            }
-            
-            .header {
-                padding: 1.5rem 0;
-                font-size: 1.5rem;
-            }
-            
-            th, td {
-                padding: 10px;
-                font-size: 14px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">>
 </head>
 <body>
     <div class="header">
-        <h1>🔍 Vulnerability Analyzer</h1>
+        <h1 class="gradient-text">🔍 Vulnerability Analyzer</h1>
         <p>Automatically extract product, vendor, and version information from vulnerability descriptions</p>
     </div>
 
@@ -215,6 +58,38 @@
     </div>
     {% endif %}
 
+
+    {% if suggestions %}
+    <div class="suggestions-box">
+        <h3><i class="fas fa-lightbulb"></i> Suggested Matches</h3>
+        <ul id="suggestionsList" class="match-list">
+            {% for pair in suggestions %}
+            <li class="match-item base-match" 
+                data-versions="{{ versions|join(',') }}"
+                onclick="showVersions(this)">
+                <i class="fas fa-chevron-right"></i>
+                {{ pair }}
+            </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Add download button -->
+        <div style="margin-top: 1.5rem;">
+            <button type="button" onclick="downloadCSV()" class="download-btn">
+                <i class="fas fa-download"></i> Download All as CSV
+            </button>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Add copy feedback element -->
+    <div id="copyFeedback" style="display: none; position: fixed; bottom: 20px; right: 20px; 
+        background: var(--primary); color: white; padding: 10px 20px; border-radius: 5px;">
+        Copied to clipboard!
+    </div>
+
+
+
     <script>
         document.getElementById('analyzeForm').addEventListener('submit', function() {
             const btn = document.getElementById('analyzeBtn');
@@ -225,5 +100,103 @@
             `;
         });
     </script>
+
+    <script>
+        function showVersions(element) {
+            // Toggle active state
+            element.classList.toggle('active');
+            
+            const versions = element.dataset.versions.split(',');
+            const baseText = element.textContent.trim();
+            
+            // Remove existing version elements
+            const existingVersions = element.parentElement.querySelectorAll('.version-match');
+            existingVersions.forEach(el => el.remove());
+            
+            if (element.classList.contains('active')) {
+                // Add version entries
+                versions.forEach(version => {
+                    const versionElement = document.createElement('li');
+                    versionElement.className = 'match-item version-match';
+                    versionElement.innerHTML = `
+                        <i class="fas fa-code-branch"></i>
+                        ${baseText}:${version}
+                    `;
+                    element.parentNode.insertBefore(versionElement, element.nextSibling);
+                });
+            }
+        }
+    </script>
+
+    <script>
+        // Add copy functionality
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            // Show feedback
+            const feedback = document.getElementById('copyFeedback');
+            feedback.style.display = 'block';
+            setTimeout(() => feedback.style.display = 'none', 2000);
+        }
+
+        // Modified version creation with copy
+        function showVersions(element) {
+            element.classList.toggle('active');
+            const versions = element.dataset.versions.split(',');
+            const baseText = element.textContent.trim().replace('chevron-right', '').trim();
+
+            // Remove existing versions
+            const existingVersions = element.parentElement.querySelectorAll('.version-match');
+            existingVersions.forEach(el => el.remove());
+
+            if (element.classList.contains('active')) {
+                versions.forEach(version => {
+                    const versionElement = document.createElement('li');
+                    versionElement.className = 'match-item version-match';
+                    versionElement.innerHTML = `
+                        <i class="fas fa-code-branch"></i>
+                        ${baseText}:${version}
+                    `;
+                    versionElement.onclick = (e) => {
+                        e.stopPropagation();
+                        copyToClipboard(`${baseText}:${version}`);
+                    };
+                    element.parentNode.insertBefore(versionElement, element.nextSibling);
+                });
+            }
+        }
+
+        // CSV download handler
+        function downloadCSV() {
+            const form = document.getElementById('analyzeForm');
+            const formData = new FormData(form);
+            
+            // Create CSV content
+            const suggestions = {{ suggestions|tojson }};
+            const versions = {{ versions|tojson }};
+            
+            let csvContent = "Vendor:Product:Version\n";
+            suggestions.forEach(sugg => {
+                versions.forEach(ver => {
+                    csvContent += `${sugg}:${ver}\n`;
+                });
+            });
+
+            // Create blob and download
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'suggestions.csv';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+
 </body>
 </html>

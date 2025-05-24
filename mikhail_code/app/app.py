@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, flash
 from markupsafe import Markup
 from start_model import run
+from test import create_suggestions
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-here'
@@ -10,6 +11,8 @@ def index():
     input_text = ''
     highlighted_text = ''
     structured_results = []
+    suggestions = []
+    versions = []
     
     if request.method == 'POST':
         input_text = request.form['text']
@@ -41,6 +44,10 @@ def index():
                     'value': entity['word'],
                     'score': entity['score']
                 } for entity in entities]
+                result = create_suggestions()
+                suggestions = result['suggestions']
+                versions = result.get('versions', [])
+
 
             except Exception as e:
                 flash(f'Error processing text: {str(e)}')
@@ -48,7 +55,9 @@ def index():
     return render_template('index.html',
                          input_text=input_text,
                          highlighted_text=highlighted_text,
-                         structured_results=structured_results)
+                         structured_results=structured_results,
+                         suggestions = suggestions,
+                         versions = versions)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
