@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, flash
 from markupsafe import Markup
 from start_model import run
-from test import create_suggestions
+from test import pipeline
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-here'
@@ -44,9 +44,17 @@ def index():
                     'value': entity['word'],
                     'score': entity['score']
                 } for entity in entities]
-                result = create_suggestions()
-                suggestions = result['suggestions']
+                result = pipeline(input_text)
+                print(result['suggestions'])
+                suggestions = []
+                for x in result['suggestions']:
+                    suggestions.append(':'.join(x.split()))
+                # print(suggestions)
                 versions = result.get('versions', [])
+                
+                if versions:
+                    versions = [str(v).strip("'[]") for v in result['versions']]
+                
 
 
             except Exception as e:
@@ -58,6 +66,23 @@ def index():
                          structured_results=structured_results,
                          suggestions = suggestions,
                          versions = versions)
+
+@app.route('/download', methods=['POST'])
+def download_csv():
+    suggestions = request.form.getlist('suggestions')
+    versions = request.form.getlist('versions')
+    
+    # Create CSV content
+    csv_data = "Vendor\tProduct\tVersion\tCPE\n"
+    for sugg in suggestions:
+        for version in versions:
+            csv_data += f"{sugg}\t{version}\t{sugg+':'+version}\n"
+    
+    return Response(
+        csv_data,
+        mimetype="text/csv",
+        headers={"Content-disposition": "attachment; filename=suggestions_test.csv"}
+    )
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

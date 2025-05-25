@@ -401,3 +401,50 @@ h3 {
         transform: translateY(0);
     }
 }
+
+.suggestions-container {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.scrollable-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border-top: 1px solid #eee;
+    margin-top: 1rem;
+    padding-top: 1rem;
+}
+
+.scroll-hint {
+    text-align: center;
+    color: var(--secondary);
+    font-size: 0.9em;
+    padding: 8px 0;
+    opacity: 0.8;
+}
+
+/* Custom scrollbar for suggestions */
+.suggestions-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.suggestions-container::-webkit-scrollbar-thumb {
+    background: var(--secondary);
+    border-radius: 3px;
+}
+
+.match-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.alert-info {
+    background: #e8f4fd;
+    color: #0c5460;
+    border: 1px solid #bee1f4;
+    border-radius: 8px;
+}

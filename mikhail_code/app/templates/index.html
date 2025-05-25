@@ -58,28 +58,51 @@
     </div>
     {% endif %}
 
-
     {% if suggestions %}
     <div class="suggestions-box">
         <h3><i class="fas fa-lightbulb"></i> Suggested Matches</h3>
-        <ul id="suggestionsList" class="match-list">
-            {% for pair in suggestions %}
-            <li class="match-item base-match" 
-                data-versions="{{ versions|join(',') }}"
-                onclick="showVersions(this)">
-                <i class="fas fa-chevron-right"></i>
-                {{ pair }}
-            </li>
-            {% endfor %}
-        </ul>
+        <div class="suggestions-container">
+            <ul id="suggestionsList" class="match-list">
+                {% for pair in suggestions[:10] %}  <!-- Show first 10 -->
+                <li class="match-item base-match" 
+                    data-versions="{{ versions|join(',') }}"
+                    onclick="showVersions(this)">
+                    <i class="fas fa-chevron-right"></i>
+                    {{ pair }}
+                </li>
+                {% endfor %}
+            </ul>
+            
+            {% if suggestions|length > 10 %}  <!-- Show scrollable section if more than 10 -->
+                <div class="more-suggestions">
+                    <div class="scrollable-list">
+                        <ul class="match-list">
+                            {% for pair in suggestions[10:] %}
+                            <li class="match-item base-match" 
+                                data-versions="{{ versions|join(',') }}"
+                                onclick="showVersions(this)">
+                                <i class="fas fa-chevron-right"></i>
+                                {{ pair }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="scroll-hint">Scroll for more suggestions</div>
+                </div>
+                {% endif %}
 
-        <!-- Add download button -->
-        <div style="margin-top: 1.5rem;">
-            <button type="button" onclick="downloadCSV()" class="download-btn">
-                <i class="fas fa-download"></i> Download All as CSV
-            </button>
-        </div>
+            <!-- Add download button -->
+            <div style="margin-top: 1.5rem;">
+                <button type="button" onclick="downloadCSV()" class="download-btn">
+                    <i class="fas fa-download"></i> Download as CSV
+                </button>
+            </div>
+    {% else %}
+    <div class="alert alert-info" style="margin-top: 1.5rem;">
+        <i class="fas fa-info-circle"></i>
+        Unfortunately, no products were found in the text
     </div>
+        </div>
     {% endif %}
 
     <!-- Add copy feedback element -->
@@ -129,6 +152,17 @@
     </script>
 
     <script>
+        // Add scroll hint animation
+        let scrollHintVisible = true;
+        setInterval(() => {
+            if(scrollHintVisible) {
+                document.querySelector('.scroll-hint').style.opacity = '0.5';
+            } else {
+                document.querySelector('.scroll-hint').style.opacity = '0.8';
+            }
+            scrollHintVisible = !scrollHintVisible;
+        }, 1000);
+
         // Add copy functionality
         function copyToClipboard(text) {
             const textarea = document.createElement('textarea');
@@ -180,10 +214,10 @@
             const suggestions = {{ suggestions|tojson }};
             const versions = {{ versions|tojson }};
             
-            let csvContent = "Vendor:Product:Version\n";
+            let csvContent = "Vendor\tProduct\tVersion\tCPE\n";
             suggestions.forEach(sugg => {
                 versions.forEach(ver => {
-                    csvContent += `${sugg}:${ver}\n`;
+                    csvContent += `${sugg}\t${ver}\t${sugg}:${ver}\n`;
                 });
             });
 
@@ -191,7 +225,7 @@
             const blob = new Blob([csvContent], { type: 'text/csv' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = 'suggestions.csv';
+            link.download = 'suggestions_test.csv';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
