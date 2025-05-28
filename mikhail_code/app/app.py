@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, flash
 from markupsafe import Markup
 from start_model import run
-from test import pipeline
+from pipeline import pipeline
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-here'
