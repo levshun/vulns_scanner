@@ -88,5 +88,4 @@ def run_parser():
                 logger.debug(f'Done  with csv file for {cve_feed_name}')
                 logger.info('*'*50)
 
-            break
 

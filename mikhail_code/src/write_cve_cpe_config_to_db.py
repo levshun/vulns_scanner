@@ -11,6 +11,9 @@ from psycopg2 import sql
 import pickle
 from typing import List
 
+import sys
+sys.path.insert(0, os.getcwd().rstrip('src'))
+#print(sys.path)
 import logging
 from src.utils.logger import main_logger
 logger = main_logger()
@@ -25,6 +28,8 @@ def split_cpe(cpe:str) -> List[str]:
          target_sw, target_hw, language, other, initial_cpe
 
 
+# Чтобы зайти через bash:
+# psql -d vulns_scanner -U postgres -h localhost
 
 dbname = "vulns_scanner"
 user = 'postgres'
@@ -41,7 +46,7 @@ cur = conn.cursor()
 track_cve = {}
 track_cpe = {}
 
-path = '../data/cve_cpe_config_dir'
+path = 'data/cve_cpe_config_dir'
 for filename in os.listdir(path):
     fullpath = os.path.join(path, filename)
     if os.path.isfile(fullpath):

@@ -7,9 +7,9 @@ create table cves (
 -- description
 create table descriptions (
 	descr_id serial primary key,
-	cve_id_pk int,
+	cve_id_fk int,
 	descr text,
-	foreign key(cve_id_pk) references cves(cve_id_pk)
+	foreign key(cve_id_fk) references cves(cve_id_pk)
 	on delete cascade);
 
 

@@ -1,24 +1,47 @@
 ## Описание структуры проекта на данный момент
 
-* `src` -- папка для хранения кода.
+```
+- data    # Здесь лежат данные
+├── cve
+│   ├── nvdcve-1.1-2002
+│   │   └── nvdcve-1.1-2002.json
+|
+│   └── nvdcve-1.1-2024
+│       └── nvdcve-1.1-2024.json
+├── cve_cpe_config_dir
+│   ├── nvdcve-1.1-2002.csv
+|
+│   └── nvdcve-1.1-2024.csv
 
-### Создание базы данных:
+- notebooks    # Здесь лежат ноутбуки с EDA
 
-* `db_schemas` -- sql-команды для создания структуры базы данных для работы
+- samples     # Здесь лежат примеры данных
 
-### Работа с базой NISD:
-Цель: raw JSON feeds -> DB with `cves`, `cpes` and `cve_cpe_config` tables.
+- src
+├── db      # sql-команды для создания структуры базы данных для работы
+│   ├── db_commands    
+│   └── db_schemas
+├── download_files.py       # скрипт для загрузки файлов
+├── get_info_from_os.py
+├── get_info_scripts_drafts
+│   ├── draft_system_info_csv_file.csv
+│   ├── os_apt.py
+│   ├── os_data.py
+│   └── os_dpkg.py
+├── get_software_info.py    # получение данных об ОС и ПО и запись в БД
+├── infogetter.py       # класс с методами для получения данных об ОС и ПО
+├── parse_nisd_feeds.py         # набор функций для обработки файлов из CPE JSON feeds
+├── run_parser.py       # создание папки с файлами, содержащими csv структуры `[cve, cpe, config_id]`
+├── utils       
+│   ├── logger.py       # логгирование
+├── write_cve_cpe_config_to_db.py   # запись CVE и CPE в БД
+└── write_descriptions_to_db.py     # запись описаний CVE в БД
 
-* `parse_nid_feeds.py` -- набор функций для обработки файлов из CPE JSON feeds
+- runner.py     # запуск парсинга feeds 
 
-* `run_parser.py` -- создание папки с файлами, содержащими csv структуры `[cve, cpe, config_id]`
+- README.md
 
-* `write_cve_cpe_config_to_db.py` -- запись из сsv структуры `[cve, cpe, config_id]` в БД
+- statistics.md     # базовая описательная статистика
+```
 
-### Получение информации об ОС и ПО
-Цель получение данных об ОС и ПО для использования в составлении CPE. Главное -- получение продукта и версии. Используем информацию из менеджеров пакетов `dpkg`, `apt`, `snap`, из файла с данными об ОС и данными об оборудовании 
-
-* `infogetter.py` -- класс с методами для получения данных об ОС и ПО
-
-* `get_info_from_os.py` -- получение данных об ОС и ПО и запись в БД
 
