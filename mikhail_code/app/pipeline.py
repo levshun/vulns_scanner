@@ -37,12 +37,12 @@ def pipeline(text):
     products = extracted['ners'][1]
     products_scores = extracted['scores'][1]
     versions = extracted['ners'][2]
-    versions_score = extracted['scores'][2]
+    # versions_score = extracted['scores'][2]
     
     # print(vendors, products, versions)
 
-    dedup_vendor, dedup_vendor_scores = deduplicate_using_probs(vendors, vendors_scores)
-    dedup_product, dedup_product_scores = deduplicate_using_probs(products, products_scores)
+    dedup_vendor, _ = deduplicate_using_probs(vendors, vendors_scores)
+    dedup_product, _ = deduplicate_using_probs(products, products_scores)
     
     # print(dedup_vendor, dedup_product, dedup_product_scores)
 
@@ -57,7 +57,6 @@ def pipeline(text):
     
     df_all = get_df_from_bd('select * from cpes limit 10000000;')
     unique_products = df_all['product'].unique()
-    unique_vendors = df_all['vendor'].unique()
 
     if dedup_product:
         # print(f'Product NER: {pr}')
@@ -93,7 +92,3 @@ def pipeline(text):
     return {'suggestions': generated_cpes,
             'versions': possible_versions}
 
-    
-
-# s = '''HDF5 Library through 1.14.3 has a SEGV in H5T_close_real in H5T.c, resulting in a corrupted instruction pointer.'''
-# pipeline(s)
