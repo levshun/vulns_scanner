@@ -1,3 +1,4 @@
 # vulns_scanner
-Development of AI-based vulnerabilities scanner for Unix-based systems using Python
+
+Кодовая база для ВКР -- "Разработка интеллектуальной системы извлечения конфигураций из описаний уязвимостей".
 
